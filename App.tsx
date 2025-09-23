@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import "react-native-gesture-handler";
-import React, { useState } from "react";
+import { useState } from "react";
 import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Header from "./components/Header";
@@ -37,10 +37,11 @@ export default function App() {
   // //   return LoadingScreen;
   // // }
 
-  const [isLoggedin, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
   return (
     <UserProvider>
-      {isLoggedin ? (
+      {isLoggedIn ? (
         <View style={styles.container}>
           <StatusBar style="auto" />
           <NavigationContainer>
