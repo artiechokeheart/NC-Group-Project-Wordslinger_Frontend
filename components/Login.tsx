@@ -8,6 +8,7 @@ import { RootStackParamList } from "../types/NavigationTypes";
 import { useNavigation } from "@react-navigation/native";
 import { ThemedButton } from "./ThemedButton";
 import { colors, fonts, spacing } from "../theme";
+import { ScreenContainer } from "./ScreenContainer";
 
 interface Users {
   [key: string]: string;
@@ -25,16 +26,6 @@ export default function Login({ navigation, route }: React.FunctionComponent) {
   const [password, setPassword] = useState("");
   const [isInvalidUsername, setIsInvalidUsername] = useState(false);
   const { user, setUser } = useAuth();
-
-  const backgroundUI = {
-    background: require("../assets/Background4.png"),
-    moutain: require("../assets/Background2.png"),
-
-    cloud1: require("../assets/Cloud1.png"),
-    cloud2: require("../assets/Cloud2.png"),
-    cloud3: require("../assets/Cloud3.png"),
-    cloud4: require("../assets/Cloud4.png"),
-  };
 
   function validUsernameCheck(username: string, password: string) {
     axios
@@ -57,17 +48,9 @@ export default function Login({ navigation, route }: React.FunctionComponent) {
   }
 
   return (
-    <ImageBackground
-      style={{ flex: 1 }}
-      source={backgroundUI.background}
-      resizeMode="cover"
-    >
+    <ScreenContainer>
       {/* Decorative Images can be part of the background or overlay */}
-      <Image
-        style={styles.mountain}
-        source={backgroundUI.moutain}
-        resizeMode="stretch"
-      />
+
       <View style={styles.formContainer}>
         <Text style={styles.title}>Wordslinger</Text>
         <TextInput
@@ -106,13 +89,12 @@ export default function Login({ navigation, route }: React.FunctionComponent) {
           </Text>
         ) : null}
       </View>
-    </ImageBackground>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   formContainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: spacing.lg,
@@ -147,12 +129,5 @@ const styles = StyleSheet.create({
     color: colors.accent,
     fontFamily: fonts.body,
     fontWeight: "bold",
-  },
-  mountain: {
-    position: "absolute",
-    bottom: 0,
-    width: "110%",
-    height: "40%", // Adjust as needed
-    left: "-5%",
   },
 });

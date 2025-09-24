@@ -1,20 +1,30 @@
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   Image,
+  ImageBackground,
   ScrollView,
-  Dimensions,
   ActivityIndicator,
 } from "react-native";
 import { ProfileLanguage } from "../types/ProfileTypes";
-import React, { useEffect, useState } from "react";
 import Achievement from "./Achievement";
-
-import axios from "axios";
 import { useAuth } from "./contexts/username";
-
 import { GameResult } from "../types/GameResusltsType";
+import { ScreenContainer } from "./ScreenContainer";
+import { colors, fonts, spacing } from "../theme";
+
+const backgroundUI = {
+  background: require("../assets/Background4.png"),
+  moutain: require("../assets/Background2.png"),
+
+  cloud1: require("../assets/Cloud1.png"),
+  cloud2: require("../assets/Cloud2.png"),
+  cloud3: require("../assets/Cloud3.png"),
+  cloud4: require("../assets/Cloud4.png"),
+};
 
 //Want username, avatar url, and bio and also the data in the array below, for a specific user
 const testLanguageData: Array<ProfileLanguage> = [
@@ -38,7 +48,6 @@ const testLanguageData: Array<ProfileLanguage> = [
   },
 ];
 
-
 const userProfile = {
   name: "Put your name here",
   username: "Put your username here",
@@ -52,7 +61,6 @@ const image2 =
   "https://img.itch.zone/aW1hZ2UvMjc2MTQwNS8xNjQ3NDQ1Ny5wbmc=/794x1000/VX87t1.png";
 const image3 =
   "https://img.itch.zone/aW1hZ2UvMjc2MTQwNS8xNjQ3NDQ2Mi5wbmc=/794x1000/TvwatB.png";
-
 
 function LanguageCard({
   language,
@@ -115,7 +123,6 @@ const testAchievementData: [string, boolean][] = [
 ];
 
 export default function Profile() {
-
   const { user } = useAuth();
   //   const getUserId = () => {
   //     return axios
@@ -161,10 +168,9 @@ export default function Profile() {
   const safeGameResults = Array.isArray(gameResults) ? gameResults : [];
   console.log(safeGameResults);
 
-
   return (
-    <ScrollView style={{ flex: 1, height: "100%", marginInline: "auto" }}>
-      <View style={styles.container}>
+    <ScreenContainer>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.avatarCard}>
           <Image
             style={styles.tinyProfilePic}
@@ -178,164 +184,315 @@ export default function Profile() {
         <View style={styles.bioCard}>
           <Text>{userProfile.bio}</Text>
         </View>
-      </View>
 
-      {testLanguageData.map(
-        ({
-          language,
-          numOfBeginnerWords,
-          numOfIntermediateWords,
-          numOfMasterWords,
-        }) => {
-          return (
-            <LanguageCard
-              language={language}
-              numOfBeginnerWords={numOfBeginnerWords}
-              numOfIntermediateWords={numOfIntermediateWords}
-              numOfMasterWords={numOfMasterWords}
-              key={language}
-            ></LanguageCard>
-          );
-        }
-      )}
-      <View style={[styles.card, { backgroundColor: "pink" }]}>
-        <Text style={styles.textHeader}>Achievements</Text>
-
-        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-          {testAchievementData.map(([achievementName, isUnlocked]) => {
+        {testLanguageData.map(
+          ({
+            language,
+            numOfBeginnerWords,
+            numOfIntermediateWords,
+            numOfMasterWords,
+          }) => {
             return (
-              <Achievement
-                achievementName={achievementName}
-                isUnlocked={isUnlocked}
-              ></Achievement>
-            );
-          })}
-        </View>
-      </View>
-      <View style={[styles.stats, { backgroundColor: "#89CFF0" }]}>
-        <Text style={styles.statsHeader}>Game History</Text>
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          safeGameResults.map(
-            ({
-              room_id,
-              match_date,
-              language,
-              winner,
-              loser,
-              english_wordlist,
-              non_english_wordlist,
-              winner_correct_answers,
-              loser_correct_answers,
-            }) => (
-              <StatsCard
-                room_id={room_id.slice(10)}
-                match_date={match_date}
+              <LanguageCard
                 language={language}
-                winner={winner}
-                loser={loser}
-                english_wordlist={english_wordlist}
-                non_english_wordlist={non_english_wordlist}
-                winner_correct_answers={winner_correct_answers}
-                loser_correct_answers={loser_correct_answers}
-                key={room_id}
-              ></StatsCard>
-            )
-          )
+                numOfBeginnerWords={numOfBeginnerWords}
+                numOfIntermediateWords={numOfIntermediateWords}
+                numOfMasterWords={numOfMasterWords}
+                key={language}
+              ></LanguageCard>
+            );
+          }
         )}
-      </View>
-    </ScrollView>
+        <View style={styles.achievementsCard}>
+          <Text style={styles.textHeader}>Achievements</Text>
+
+          <View style={styles.achievementsContainer}>
+            {testAchievementData.map(([achievementName, isUnlocked]) => {
+              return (
+                <Achievement
+                  achievementName={achievementName}
+                  isUnlocked={isUnlocked}
+                ></Achievement>
+              );
+            })}
+          </View>
+        </View>
+        <View style={styles.stats}>
+          <Text style={styles.statsHeader}>Game History</Text>
+          {isLoading ? (
+            <ActivityIndicator size="large" color={colors.primary} />
+          ) : (
+            safeGameResults.map(
+              ({
+                room_id,
+                match_date,
+                language,
+                winner,
+                loser,
+                english_wordlist,
+                non_english_wordlist,
+                winner_correct_answers,
+                loser_correct_answers,
+              }) => (
+                <StatsCard
+                  room_id={room_id.slice(10)}
+                  match_date={match_date}
+                  language={language}
+                  winner={winner}
+                  loser={loser}
+                  english_wordlist={english_wordlist}
+                  non_english_wordlist={non_english_wordlist}
+                  winner_correct_answers={winner_correct_answers}
+                  loser_correct_answers={loser_correct_answers}
+                  key={room_id}
+                ></StatsCard>
+              )
+            )
+          )}
+        </View>
+      </ScrollView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    width: "100%",
-    backgroundColor: "grey",
-    marginBlockEnd: 10,
+    padding: spacing.lg,
+    margin: spacing.lg,
+    borderWidth: 3,
+    borderColor: colors.primary,
+    borderRadius: 20,
+    // backgroundColor: "rgba(245, 222, 179, 0.85)",
   },
-  avatarCard: { marginBlock: 8, alignItems: "center" },
-  bioCard: { marginBlock: 8, alignItems: "center" },
+
+  scrollViewContainer: {
+    backgroundColor: "transparent",
+  },
+
+  avatarCard: {
+    alignItems: "center",
+    backgroundColor: colors.background,
+    padding: spacing.md,
+    borderRadius: 10,
+    borderWidth: 3,
+    borderColor: colors.primary,
+    marginBottom: spacing.lg,
+    width: "100%",
+  },
+  bioCard: {
+    alignItems: "center",
+    backgroundColor: colors.background,
+    padding: spacing.md,
+    borderRadius: 10,
+    borderWidth: 3,
+    borderColor: colors.primary,
+    marginBottom: spacing.lg,
+    width: "100%",
+  },
   card: {
-    width: Dimensions.get("screen").width,
-    height: "auto",
-    marginBlockEnd: 10,
+    width: "100%",
+    marginBottom: spacing.lg,
     alignItems: "center",
     borderRadius: 10,
-    borderColor: "black",
-    borderWidth: 2,
+    borderColor: colors.text,
+    borderWidth: 3,
+    padding: spacing.md,
   },
   French: {
-    backgroundColor: "#000091",
+    backgroundColor: colors.primary, // Saddle Brown
   },
   Spanish: {
-    backgroundColor: "#FFCC00",
+    backgroundColor: colors.secondary, // Tan
   },
   German: {
-    backgroundColor: "#AA151B",
+    backgroundColor: colors.accent, // Firebrick Red
   },
   textHeader: {
-    color: "white",
+    fontFamily: fonts.heading,
+    color: colors.background,
     fontSize: 24,
-    fontWeight: "bold",
+    marginBottom: spacing.sm,
   },
   langText: {
-    color: "black",
+    fontFamily: fonts.body,
+    color: colors.text,
     fontSize: 20,
     fontWeight: "bold",
-    width: Dimensions.get("screen").width - 50,
-    backgroundColor: "white",
-    marginBlock: 10,
+    width: "100%",
+    backgroundColor: colors.background,
+    marginVertical: spacing.xs,
     textAlign: "center",
     borderRadius: 10,
-    height: "20%",
+    padding: spacing.sm,
   },
   tinyProfilePic: {
     width: 100,
     height: 100,
-    borderRadius: 50 / 2,
+    borderRadius: 50,
     overflow: "hidden",
-    borderWidth: 2,
-    borderColor: "black",
+    borderWidth: 3,
+    borderColor: colors.primary,
+    marginBottom: spacing.sm,
   },
   stats: {
-    width: Dimensions.get("screen").width,
-    height: "auto",
-    marginBlockEnd: 10,
+    width: "100%",
+    marginBottom: spacing.lg,
     alignItems: "center",
     borderRadius: 10,
-    borderColor: "black",
-    borderWidth: 2,
+    borderColor: colors.text,
+    borderWidth: 3,
+    padding: spacing.md,
+    backgroundColor: colors.secondary,
   },
   statsHeader: {
-    color: "white",
+    fontFamily: fonts.heading,
+    color: colors.text,
     fontSize: 24,
-    fontWeight: "bold",
+    marginBottom: spacing.md,
   },
-  statsCard: { marginBlock: 8, alignItems: "center" },
+  statsCard: {
+    marginVertical: spacing.sm,
+    alignItems: "center",
+    width: "100%",
+  },
   gameNo: {
-    color: "white",
+    fontFamily: fonts.heading,
+    color: colors.text,
     fontSize: 24,
-    fontWeight: "bold",
   },
   statsText: {
-    color: "black",
+    fontFamily: fonts.body,
+    color: colors.text,
     fontSize: 20,
-    fontWeight: "bold",
-    width: Dimensions.get("screen").width - 50,
-    // backgroundColor: "white",
-    marginBlock: 10,
+    marginVertical: spacing.xs,
     textAlign: "center",
-    // borderRadius: 10,
-    height: "20%",
   },
   textContainer: {
-    backgroundColor: "white",
+    backgroundColor: colors.background,
     borderRadius: 10,
+    padding: spacing.md,
+    width: "100%",
+  },
+  achievementsCard: {
+    width: "100%",
+    marginBottom: spacing.lg,
+    alignItems: "center",
+    borderRadius: 10,
+    borderColor: colors.text,
+    borderWidth: 3,
+    padding: spacing.md,
+    backgroundColor: colors.secondary,
+  },
+  achievementsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    width: "100%",
+  },
+  errorText: {
+    marginTop: spacing.md,
+    color: colors.accent,
+    fontFamily: fonts.body,
+    fontWeight: "bold",
+  },
+  mountain: {
+    position: "absolute",
+    bottom: 0,
+    width: "110%",
+    height: "60%", // Adjust as needed
+    left: "-5%",
   },
 });
+
+// const styles = StyleSheet.create({
+//   container: {
+//     alignItems: "center",
+//     width: "100%",
+//     backgroundColor: "grey",
+//     marginBlockEnd: 10,
+//   },
+//   avatarCard: { marginBlock: 8, alignItems: "center" },
+//   bioCard: { marginBlock: 8, alignItems: "center" },
+//   card: {
+//     width: Dimensions.get("screen").width,
+//     height: "auto",
+//     marginBlockEnd: 10,
+//     alignItems: "center",
+//     borderRadius: 10,
+//     borderColor: "black",
+//     borderWidth: 2,
+//   },
+//   French: {
+//     backgroundColor: "#000091",
+//   },
+//   Spanish: {
+//     backgroundColor: "#FFCC00",
+//   },
+//   German: {
+//     backgroundColor: "#AA151B",
+//   },
+//   textHeader: {
+//     color: "white",
+//     fontSize: 24,
+//     fontWeight: "bold",
+//   },
+//   langText: {
+//     color: "black",
+//     fontSize: 20,
+//     fontWeight: "bold",
+//     width: Dimensions.get("screen").width - 50,
+//     backgroundColor: "white",
+//     marginBlock: 10,
+//     textAlign: "center",
+//     borderRadius: 10,
+//     height: "20%",
+//   },
+//   tinyProfilePic: {
+//     width: 100,
+//     height: 100,
+//     borderRadius: 50 / 2,
+//     overflow: "hidden",
+//     borderWidth: 2,
+//     borderColor: "black",
+//   },
+//   stats: {
+//     width: Dimensions.get("screen").width,
+//     height: "auto",
+//     marginBlockEnd: 10,
+//     alignItems: "center",
+//     borderRadius: 10,
+//     borderColor: "black",
+//     borderWidth: 2,
+//   },
+//   statsHeader: {
+//     color: "white",
+//     fontSize: 24,
+//     fontWeight: "bold",
+//   },
+//   statsCard: { marginBlock: 8, alignItems: "center" },
+//   gameNo: {
+//     color: "white",
+//     fontSize: 24,
+//     fontWeight: "bold",
+//   },
+//   statsText: {
+//     color: "black",
+//     fontSize: 20,
+//     fontWeight: "bold",
+//     width: Dimensions.get("screen").width - 50,
+//     // backgroundColor: "white",
+//     marginBlock: 10,
+//     textAlign: "center",
+//     // borderRadius: 10,
+//     height: "20%",
+//   },
+//   textContainer: {
+//     backgroundColor: "white",
+//     borderRadius: 10,
+//   },
+// });
 
 //   {
 //     userId: "1",
@@ -359,6 +516,7 @@ const styles = StyleSheet.create({
 //     wordsWrong: "plum",
 //   },
 // ];
+
 {
   /* <View>
 <Image
