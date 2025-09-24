@@ -1,17 +1,13 @@
 import React, { useState } from "react";
 import { Image, ImageBackground } from "react-native";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 import { useAuth } from "./contexts/username";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/NavigationTypes";
 import { useNavigation } from "@react-navigation/native";
+import { ThemedButton } from "./ThemedButton";
+import { colors, fonts, spacing } from "../theme";
 
 interface Users {
   [key: string]: string;
@@ -61,211 +57,102 @@ export default function Login({ navigation, route }: React.FunctionComponent) {
   }
 
   return (
-    <>
-      <ImageBackground
-        style={{ flex: 1, height: "100%", width: "100%" }}
-        source={backgroundUI.background}
-      >
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            overflow: "hidden",
-            justifyContent: "flex-start",
-          }}
-        >
-          <Image
-            style={{ top: "75%", left: "-30%", width: "100%" }}
-            source={backgroundUI.cloud1}
-          />
-          <Image
-            style={{ top: "75%", right: "100%", zIndex: 3 }}
-            source={backgroundUI.cloud2}
-          />
-          <Image
-            style={{ top: "0%", right: "180%" }}
-            source={backgroundUI.cloud3}
-          />
-          <Image
-            style={{ top: "15%", right: "160%" }}
-            source={backgroundUI.cloud4}
-          />
-        </View>
-
-        <Image
-          style={{
-            position: "absolute",
-            bottom: "0%",
-            resizeMode: "stretch",
-            width: "110%",
-          }}
-          source={backgroundUI.moutain}
+    <ImageBackground
+      style={{ flex: 1 }}
+      source={backgroundUI.background}
+      resizeMode="cover"
+    >
+      {/* Decorative Images can be part of the background or overlay */}
+      <Image
+        style={styles.mountain}
+        source={backgroundUI.moutain}
+        resizeMode="stretch"
+      />
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Wordslinger</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Username"
+          value={username}
+          onChangeText={setUsername}
+          placeholderTextColor={colors.text}
         />
-        <View style={styles.container}>
-          <Text style={styles.title}>Log in{user}</Text>
-          <TextInput
-            style={styles.pwInput}
-            placeholder="Enter Username"
-            value={username}
-            onChangeText={setUsername}
-          />
 
-          <TextInput
-            style={styles.pwInput}
-            placeholder="Enter Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={true}
-          />
-          <TouchableOpacity
-            style={buttonStyling.buttonContainer}
-            onPress={() => {
-              validUsernameCheck(username, password);
-            }}
-          >
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={true}
+          placeholderTextColor={colors.text}
+        />
 
-            <View style={buttonStyling.buttonActive}>
-              <Text style={buttonStyling.buttonActiveText}>Log in</Text>
-            </View>
+        <ThemedButton
+          title="Log In"
+          onPress={() => validUsernameCheck(username, password)}
+          style={{ width: "100%", marginBottom: spacing.md }}
+        />
 
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={buttonStyling.buttonContainer}
-            onPress={() => {
-              navigateTo.navigate("Signup");
-            }}
-          >
+        <ThemedButton
+          title="Sign Up"
+          variant="secondary"
+          onPress={() => navigateTo.navigate("Signup")}
+          style={{ width: "100%" }}
+        />
 
-            <View style={buttonStyling.buttonActive}>
-              <Text style={buttonStyling.buttonActiveText}>Sign up</Text>
-            </View>
-
-          </TouchableOpacity>
-
-          {isInvalidUsername ? (
-            <Text>Username/password is not correct! </Text>
-          ) : null}
-        </View>
-      </ImageBackground>
-    </>
+        {isInvalidUsername ? (
+          <Text style={styles.errorText}>
+            Username or password is not correct!
+          </Text>
+        ) : null}
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  formContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: "7%",
+    padding: spacing.lg,
+    margin: spacing.lg,
     borderWidth: 3,
-    borderColor: "grey",
+    borderColor: colors.primary,
     borderRadius: 20,
-    maxHeight: "40%",
-    maxWidth: "90%",
-    backgroundColor: "white",
-    position: "relative",
-    marginInline: "10%",
-    bottom: "40%",
+    backgroundColor: "rgba(245, 222, 179, 0.85)", // Semi-transparent Wheat
   },
   title: {
-    fontSize: 24,
-    marginBottom: "7.5%",
+    fontFamily: fonts.display,
+    fontSize: 64,
+    color: colors.primary,
+    marginBottom: spacing.xl,
   },
   input: {
-    width: "80%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  pwInput: {
-    width: "80%",
-    padding: "2.5%",
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 5,
-    marginBottom: 10,
+    width: "100%",
+    height: 50,
+    paddingHorizontal: spacing.md,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    borderRadius: 8,
+    marginBottom: spacing.md,
     textAlign: "center",
-  },
-  navButton: {
-    borderColor: "#2583ff",
-    borderWidth: 1.2,
-    borderRadius: 14,
-    height: 40,
-    width: 80,
-    alignItems: "center",
-  },
-});
-
-const buttonStyling = StyleSheet.create({
-  buttonContainer: {
-    margin: "1%",
-    right: 0,
-    bottom: 0,
-    display: "flex",
-    alignItems: "center",
-  },
-  buttonActive: {
-    borderRadius: 20,
-    borderWidth: 4,
-    borderColor: "#FFFFFF",
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    backgroundColor: "#878787",
-    width: "150%",
-  },
-  buttonActiveText: {
-    backgroundColor: "#BFBFBF",
-    maxHeight: 80,
-    color: "black",
-    padding: 2,
-    borderRadius: 6,
-    fontWeight: "bold",
-    textTransform: "uppercase",
+    backgroundColor: colors.background,
+    fontFamily: fonts.body,
     fontSize: 16,
-    textAlign: "center",
+    color: colors.text,
   },
-  buttonInactive: {
-    borderRadius: 20,
-    borderWidth: 4,
-    borderColor: "#878787",
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    backgroundColor: "#BFBFBF",
-    width: "25%",
-  },
-  buttonInactiveText: {
-    backgroundColor: "#878787",
-    maxHeight: 80,
-    color: "white",
-    padding: 2,
-    borderRadius: 6,
+  errorText: {
+    marginTop: spacing.md,
+    color: colors.accent,
+    fontFamily: fonts.body,
     fontWeight: "bold",
-    textTransform: "uppercase",
-    fontSize: 16,
-    textAlign: "center",
   },
-  textLargeOverlay: {
+  mountain: {
     position: "absolute",
-    top: "65%",
-    left: 0,
-    right: 0,
     bottom: 0,
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 36,
-    zIndex: 2,
-  },
-  textSmallOverlay: {
-    position: "absolute",
-    top: "65%",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 16,
-    zIndex: 2,
+    width: "110%",
+    height: "40%", // Adjust as needed
+    left: "-5%",
   },
 });
