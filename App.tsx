@@ -15,8 +15,6 @@ import Leaderboard from "./components/Leaderboard";
 import { UserProvider } from "./components/contexts/username";
 import Profile from "./components/Profile";
 import { Settings } from "./components/Settings";
-import wordList from "./_testdata/words";
-import { Word } from "./types/globalTypes";
 import { Signup } from "./components/Signup";
 import Review from "./components/Review";
 import ReviewGame from "./components/ReviewGame";
@@ -37,7 +35,7 @@ export default function App() {
   // //   return LoadingScreen;
   // // }
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <UserProvider>
